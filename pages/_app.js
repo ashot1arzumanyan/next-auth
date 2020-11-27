@@ -3,10 +3,19 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container'
 import theme from '../src/theme'
+import { makeStyles } from '@material-ui/core/styles'
 
-import '../styles/globals.css'
+const useStyles = makeStyles((theme) => ({
+  root: {
+    marginTop: theme.spacing(3)
+  }
+}))
+
+// import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
+
+  const classes = useStyles()
 
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
@@ -17,7 +26,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component='main' >
+      <Container className={classes.root} component='main' >
         <CssBaseline />
         <Component {...pageProps} />
       </Container>
