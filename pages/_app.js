@@ -2,12 +2,13 @@ import { useEffect } from 'react'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container'
-import theme from '../src/theme'
 import { makeStyles } from '@material-ui/core/styles'
+import theme from '../src/theme'
+import NavBar from '../src/components/NavBar'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(11)
   }
 }))
 
@@ -26,8 +27,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container className={classes.root} component='main' >
+      <Container className={classes.root} >
         <CssBaseline />
+        <NavBar />
         <Component {...pageProps} />
       </Container>
     </ThemeProvider>
