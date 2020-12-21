@@ -1,14 +1,6 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
-export async function getStaticProps(context) {
-  const res = await fetch('http://localhost:3000/api/auth/register')
-  console.log(res)
-  return {
-    props: {}
-  }
-}
-
 export default function Home() {
   return (
     <div className={styles.container}>

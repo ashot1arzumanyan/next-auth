@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import TextField from '@material-ui/core/TextField'
+import { useRouter } from 'next/router' 
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import FormControl from '@material-ui/core/FormControl'
@@ -12,10 +12,9 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
-
-import { registerSchema as schema } from '@/validator/schemas'
-import { register } from '@/apis/auth'
-// import { setCsrf } from '@/middleware/csrf'
+import { resetPasswordSchema as schema } from '@/validator/schemas'
+import { getErrors, getValuesBlured } from './register'
+import { resetPassword } from '@/apis/auth'
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -23,59 +22,39 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '320px',
     display: 'flex',
     flexDirection: 'column'
+  },
+  continueBtn: {
+    marginTop: theme.spacing(3)
   }
 }))
 
 const initialErrors = {
-  emailErr: '',
   passwordErr: '',
   rePasswordErr: ''
 }
 
 const initialData = {
-  email: '',
   password: '',
   rePassword: '',
   ...initialErrors
 }
 
 const initialBlured = {
-  emailErr: false,
   passwordErr: false,
   rePasswordErr: false
 }
 
-export const getErrors = async (values, schema, errors) => {
-  let hasError = false
-  try {
-    await schema.validate(values, {abortEarly: false})
-  } catch (err) {
-    hasError = true
-    err.inner.forEach(i => {
-      const errorName = `${i.path}Err`
-      errors[errorName] = i.message
-    })
-  }
-  return {errors, hasError}
-}
+export default function ResetPassword () {
 
-export const getValuesBlured = (inputsData, blured) => {
-  const values = {}
-  Object.keys(inputsData).forEach((key) => {
-    if (blured[key]) {
-      values[key] = inputsData[key]
-    }
-  })
-  return values
-}
-
-export default function Register() {
-
-  const classes = useStyles()
-
-  const [showPassword, setShowPassword] = useState()
   const [inputsData, setInputsData] = useState(initialData)
+  const [showPassword, setShowPassword] = useState()
   const [blured, setBlured] = useState(initialBlured)
+  const [passwordChanged, setPasswordChanged] = useState(false)
+  
+  const classes = useStyles()
+  const router = useRouter()
+
+  const { w } = router.query
 
   const handleBlur = field => () => {
     if (!blured[field]) {
@@ -104,38 +83,45 @@ export default function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    setBlured({email: true, password: true, rePassword: true})
-    const { emailErr, passwordErr, rePasswordErr, ...values } = inputsData
+    setBlured({ password: true, rePassword: true })
+    const { passwordErr, rePasswordErr, ...values } = inputsData
     const { errors, hasError } = await getErrors(values, schema, {...initialErrors})
     if (hasError) {
       setInputsData({...inputsData, ...errors})
     } else {
-      register(values)
-        .then(console.log)
-        .catch(console.log)
+      const { ok } = await resetPassword({...values, tok: w})
+      if (ok) {
+        setPasswordChanged(true)
+      }
     }
+  }
+
+  if (passwordChanged) {
+    return (
+      <Grid container direction='column' alignItems='center' >
+        <Typography variant='body1' >
+          Գաղտնաբառը փոփոխված է, կարող եք մուտք գործել
+        </Typography>
+        <Button className={classes.continueBtn} onClick={() => router.push('/login')} >
+          Շարունակել
+        </Button>
+      </Grid>
+    )
   }
 
   return (
     <Grid container direction='column' alignItems='center' >
-      <Typography component='h1' variant='h5' >
-        Գրանցում
+      <Typography variant='h5' >
+        Գաղտնաբառի փոփոխություն
+      </Typography>
+      <Typography variant='overline' >
+        Նշեք Ձեր Էլ․ հասցեն կարգավորումներ ստանալու համար 
       </Typography>
       <form
         className={classes.form}
         onSubmit={handleSubmit}
         noValidate >
         <Grid container direction='column' >
-          <TextField 
-            onChange={handleChange('email')}
-            onBlur={handleBlur('email')}
-            value={inputsData.email}
-            label='Էլ․ հասցե' 
-            variant='outlined' 
-            margin='normal' 
-            error={!!inputsData.emailErr}
-            helperText={inputsData.emailErr}
-          />
           <FormControl variant='outlined' margin='normal' error={!!inputsData.passwordErr} >
             <InputLabel htmlFor='password' >Գաղտնաբառ</InputLabel>
             <OutlinedInput 
@@ -178,17 +164,9 @@ export default function Register() {
         <Button 
           type='submit'
           > 
-          Գրանցվել
+          Հաստատել
         </Button>
       </form>
     </Grid>
   )
 }
-
-// export async function getServerSideProps (ctx) {
-//   const { a, salt, tok } = await setCsrf(ctx.req, ctx.res)
-//   console.log(a, salt, tok)
-//   return {
-//     props: {}
-//   }
-// }

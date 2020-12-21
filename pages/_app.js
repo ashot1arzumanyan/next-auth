@@ -5,6 +5,7 @@ import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
 import theme from '../src/theme'
 import NavBar from '../src/components/NavBar'
+// import useUser from '@/hooks/useUser'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,6 +19,8 @@ function MyApp({ Component, pageProps }) {
 
   const classes = useStyles()
 
+  // const user = useUser()
+
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
     if (jssStyles) {
@@ -29,7 +32,7 @@ function MyApp({ Component, pageProps }) {
     <ThemeProvider theme={theme}>
       <Container className={classes.root} >
         <CssBaseline />
-        <NavBar />
+        <NavBar user={pageProps.user} />
         <Component {...pageProps} />
       </Container>
     </ThemeProvider>

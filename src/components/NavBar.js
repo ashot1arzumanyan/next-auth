@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -12,12 +13,19 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import { logout } from '@/apis/auth'
 
-const NavBar = () => {
+const NavBar = ({user}) => {
 
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
 
   const toggleDrawer = () => setIsOpen(!isOpen)
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/')
+  }
 
   return (
     <AppBar >
@@ -34,17 +42,33 @@ const NavBar = () => {
             </IconButton>
             <Drawer open={isOpen} onClose={toggleDrawer} anchor='right' >
               <List onClick={toggleDrawer}>
-                <ListItem button >
-                  <NextLink href='/register' >
-                    <ListItemText primary='Մուտք' />
-                  </NextLink>
-                </ListItem>
-                <ListItem button >
-                  <NextLink href='/register' >
-                    <ListItemText primary='Գրանցում' />
-                  </NextLink>
-                </ListItem>
-                <ListItem divider ></ListItem>
+                {!user ? (
+                  <>
+                    <ListItem button >
+                      <NextLink href='/login' >
+                        <ListItemText primary='Մուտք' />
+                      </NextLink>
+                    </ListItem>
+                    <ListItem button >
+                      <NextLink href='/register' >
+                        <ListItemText primary='Գրանցում' />
+                      </NextLink>
+                    </ListItem>
+                    <ListItem divider ></ListItem>
+                  </>
+                ) : (
+                  <>
+                    <ListItem button >
+                      <NextLink href='/profile' >
+                        <ListItemText primary='Կարգավորումներ' />
+                      </NextLink>
+                    </ListItem>
+                    <ListItem button onClick={handleLogout} >
+                      <ListItemText primary='Դուրս գալ' />
+                    </ListItem>
+                    <ListItem divider ></ListItem>
+                  </>
+                )}
               </List>
             </Drawer>
           </Box>
