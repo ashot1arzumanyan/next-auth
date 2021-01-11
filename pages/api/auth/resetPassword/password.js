@@ -1,10 +1,10 @@
 import withErrorHandler from '@/middleware/errorHandler'
-import User from '@/models/user'
-import Session from '@/models/session'
-import runMongoose from '@/utils/db'
+import User from '@/db/models/user'
+import Session from '@/db/models/session'
+import runMongoose from '@/middleware/db'
 import { checkAuthAndGetUser } from '@/middleware/auth'
 import bcrypt from 'bcryptjs'
-import { resetPasswordSchema } from '@/validator/schemas'
+import { resetPasswordSchema } from '@/utils/validator/schemas'
 
 const handler = async (req, res) => {
   await runMongoose()

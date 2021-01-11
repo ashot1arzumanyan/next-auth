@@ -4,10 +4,10 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
-import { emailSchema } from '@/validator/schemas'
+import { emailSchema } from '@/utils/validator/schemas'
 import { resetPasswordEmail } from '@/apis/auth'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   form: {
     width: '100%',
     maxWidth: '320px',
@@ -20,8 +20,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function ResetPasswordEmail () {
-
+export default function ResetPasswordEmail() {
   const [email, setEmail] = useState('')
   const [emailErr, setEmailErr] = useState('')
   const [blured, setBlured] = useState(false)
@@ -29,10 +28,10 @@ export default function ResetPasswordEmail () {
   const classes = useStyles()
 
   const handleChange = async e => {
-    const value = e.target.value
+    const { value } = e.target
     if (blured) {
       try {
-        await emailSchema.validate({email: value})
+        await emailSchema.validate({ email: value })
         setEmailErr('')
       } catch (err) {
         setEmailErr(err.message)
@@ -63,8 +62,8 @@ export default function ResetPasswordEmail () {
 
   if (emailSent) {
     return (
-      <Grid container justify='center' alignItems='center' >
-        <Typography variant='body1' >
+      <Grid container justify="center" alignItems="center">
+        <Typography variant="body1">
           Ստուգեք Ձեր էլ․ հասցեն և հետևեք ցուցումներին
         </Typography>
       </Grid>
@@ -72,32 +71,31 @@ export default function ResetPasswordEmail () {
   }
 
   return (
-    <Grid container direction='column' alignItems='center' >
-      <Typography variant='h5' >
+    <Grid container direction="column" alignItems="center">
+      <Typography variant="h5">
         Գաղտնաբառի փոփոխություն
       </Typography>
-      <Typography variant='overline' >
-        Նշեք Ձեր Էլ․ հասցեն կարգավորումներ ստանալու համար 
+      <Typography variant="overline">
+        Նշեք Ձեր Էլ․ հասցեն կարգավորումներ ստանալու համար
       </Typography>
       <form
         className={classes.form}
         onSubmit={handleSubmit}
-        noValidate >
-        <Grid container direction='column' >
-          <TextField 
+        noValidate
+      >
+        <Grid container direction="column">
+          <TextField
             onChange={handleChange}
             onBlur={handleBlur}
             value={email}
-            label='Էլ․ հասցե' 
-            variant='outlined' 
-            margin='normal' 
+            label="Էլ․ հասցե"
+            variant="outlined"
+            margin="normal"
             error={!!emailErr}
             helperText={emailErr}
           />
         </Grid>
-        <Button 
-          type='submit'
-          > 
+        <Button type="submit">
           ՈԻղարկել կարգավորումներ
         </Button>
       </form>

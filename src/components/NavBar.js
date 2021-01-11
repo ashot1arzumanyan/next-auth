@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import AppBar from '@material-ui/core/AppBar'
@@ -15,8 +16,7 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import { logout } from '@/apis/auth'
 
-const NavBar = ({user}) => {
-
+const NavBar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
 
@@ -28,45 +28,45 @@ const NavBar = ({user}) => {
   }
 
   return (
-    <AppBar >
+    <AppBar>
       <Toolbar>
-        <Grid justify='space-between' alignItems='center' container >
-          <Button style={{color: 'white'}}>
-            <NextLink href='/' >
+        <Grid justify="space-between" alignItems="center" container>
+          <Button style={{ color: 'white' }}>
+            <NextLink href="/">
               <Typography>LOGO</Typography>
-            </NextLink> 
+            </NextLink>
           </Button>
-          <Box color='white'>
-            <IconButton edge='end' onClick={toggleDrawer} style={{color: 'white'}} aria-label='menu' >
+          <Box color="white">
+            <IconButton edge="end" onClick={toggleDrawer} style={{ color: 'white' }} aria-label="menu">
               <MenuIcon />
             </IconButton>
-            <Drawer open={isOpen} onClose={toggleDrawer} anchor='right' >
+            <Drawer open={isOpen} onClose={toggleDrawer} anchor="right">
               <List onClick={toggleDrawer}>
                 {!user ? (
                   <>
-                    <ListItem button >
-                      <NextLink href='/login' >
-                        <ListItemText primary='Մուտք' />
+                    <ListItem button>
+                      <NextLink href="/login">
+                        <ListItemText primary="Մուտք" />
                       </NextLink>
                     </ListItem>
-                    <ListItem button >
-                      <NextLink href='/register' >
-                        <ListItemText primary='Գրանցում' />
+                    <ListItem button>
+                      <NextLink href="/register">
+                        <ListItemText primary="Գրանցում" />
                       </NextLink>
                     </ListItem>
-                    <ListItem divider ></ListItem>
+                    <ListItem divider />
                   </>
                 ) : (
                   <>
-                    <ListItem button >
-                      <NextLink href='/profile' >
-                        <ListItemText primary='Կարգավորումներ' />
+                    <ListItem button>
+                      <NextLink href="/profile">
+                        <ListItemText primary="Կարգավորումներ" />
                       </NextLink>
                     </ListItem>
-                    <ListItem button onClick={handleLogout} >
-                      <ListItemText primary='Դուրս գալ' />
+                    <ListItem button onClick={handleLogout}>
+                      <ListItemText primary="Դուրս գալ" />
                     </ListItem>
-                    <ListItem divider ></ListItem>
+                    <ListItem divider />
                   </>
                 )}
               </List>
@@ -76,6 +76,16 @@ const NavBar = ({user}) => {
       </Toolbar>
     </AppBar>
   )
+}
+
+NavBar.defaultProps = {
+  user: null
+}
+
+NavBar.propTypes = {
+  user: PropTypes.shape({
+    _id: PropTypes.string.isRequired
+  })
 }
 
 export default NavBar

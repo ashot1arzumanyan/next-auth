@@ -13,11 +13,11 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { registerSchema as schema } from '@/validator/schemas'
+import { registerSchema as schema } from '@/utils/validator/schemas'
 import { register } from '@/apis/auth'
 // import { setCsrf } from '@/middleware/csrf'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   form: {
     width: '100%',
     maxWidth: '320px',
@@ -45,23 +45,24 @@ const initialBlured = {
   rePasswordErr: false
 }
 
-export const getErrors = async (values, schema, errors) => {
+export const getErrors = async (values, schemaLocal, errors) => {
   let hasError = false
+  const newErrors = { ...errors }
   try {
-    await schema.validate(values, {abortEarly: false})
+    await schemaLocal.validate(values, { abortEarly: false })
   } catch (err) {
     hasError = true
     err.inner.forEach(i => {
       const errorName = `${i.path}Err`
-      errors[errorName] = i.message
+      newErrors[errorName] = i.message
     })
   }
-  return {errors, hasError}
+  return { errors: newErrors, hasError }
 }
 
 export const getValuesBlured = (inputsData, blured) => {
   const values = {}
-  Object.keys(inputsData).forEach((key) => {
+  Object.keys(inputsData).forEach(key => {
     if (blured[key]) {
       values[key] = inputsData[key]
     }
@@ -70,7 +71,6 @@ export const getValuesBlured = (inputsData, blured) => {
 }
 
 export default function Register() {
-
   const classes = useStyles()
 
   const [showPassword, setShowPassword] = useState()
@@ -79,20 +79,20 @@ export default function Register() {
 
   const handleBlur = field => () => {
     if (!blured[field]) {
-      setBlured({...blured, [field]: true})
+      setBlured({ ...blured, [field]: true })
     }
   }
 
   const handleChange = prop => async e => {
-    const value = e.target.value
+    const { value } = e.target
     const newInputsData = {
       ...inputsData,
       [prop]: value
     }
     if (blured[prop]) {
       const values = await getValuesBlured(newInputsData, blured)
-      const { errors } = await getErrors(values, schema, {...initialErrors})
-      setInputsData({...newInputsData, ...errors})
+      const { errors } = await getErrors(values, schema, { ...initialErrors })
+      setInputsData({ ...newInputsData, ...errors })
     } else {
       setInputsData(newInputsData)
     }
@@ -104,11 +104,11 @@ export default function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    setBlured({email: true, password: true, rePassword: true})
+    setBlured({ email: true, password: true, rePassword: true })
     const { emailErr, passwordErr, rePasswordErr, ...values } = inputsData
-    const { errors, hasError } = await getErrors(values, schema, {...initialErrors})
+    const { errors, hasError } = await getErrors(values, schema, { ...initialErrors })
     if (hasError) {
-      setInputsData({...inputsData, ...errors})
+      setInputsData({ ...inputsData, ...errors })
     } else {
       register(values)
         .then(console.log)
@@ -117,78 +117,69 @@ export default function Register() {
   }
 
   return (
-    <Grid container direction='column' alignItems='center' >
-      <Typography component='h1' variant='h5' >
+    <Grid container direction="column" alignItems="center">
+      <Typography component="h1" variant="h5">
         Գրանցում
       </Typography>
       <form
         className={classes.form}
         onSubmit={handleSubmit}
-        noValidate >
-        <Grid container direction='column' >
-          <TextField 
+        noValidate
+      >
+        <Grid container direction="column">
+          <TextField
             onChange={handleChange('email')}
             onBlur={handleBlur('email')}
             value={inputsData.email}
-            label='Էլ․ հասցե' 
-            variant='outlined' 
-            margin='normal' 
+            label="Էլ․ հասցե"
+            variant="outlined"
+            margin="normal"
             error={!!inputsData.emailErr}
             helperText={inputsData.emailErr}
           />
-          <FormControl variant='outlined' margin='normal' error={!!inputsData.passwordErr} >
-            <InputLabel htmlFor='password' >Գաղտնաբառ</InputLabel>
-            <OutlinedInput 
-              id='password' 
+          <FormControl variant="outlined" margin="normal" error={!!inputsData.passwordErr}>
+            <InputLabel htmlFor="password">Գաղտնաբառ</InputLabel>
+            <OutlinedInput
+              id="password"
               type={showPassword ? 'text' : 'password'}
               onChange={handleChange('password')}
               onBlur={handleBlur('password')}
               value={inputsData.password}
               labelWidth={120}
-              endAdornment={
-                <InputAdornment position='end' >
+              endAdornment={(
+                <InputAdornment position="end">
                   <IconButton onClick={toggleShowPassword}>
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
-              }
+              )}
             />
-            <FormHelperText  >{inputsData.passwordErr}</FormHelperText>
+            <FormHelperText>{inputsData.passwordErr}</FormHelperText>
           </FormControl>
-          <FormControl variant='outlined' margin='normal' error={!!inputsData.rePasswordErr} >
-            <InputLabel htmlFor='rePassword' >Գաղտնաբառի կրկնություն</InputLabel>
-            <OutlinedInput 
-              id='rePassword' 
+          <FormControl variant="outlined" margin="normal" error={!!inputsData.rePasswordErr}>
+            <InputLabel htmlFor="rePassword">Գաղտնաբառի կրկնություն</InputLabel>
+            <OutlinedInput
+              id="rePassword"
               type={showPassword ? 'text' : 'password'}
               onChange={handleChange('rePassword')}
               onBlur={handleBlur('rePassword')}
               value={inputsData.rePassword}
               labelWidth={235}
-              endAdornment={
-                <InputAdornment position='end' >
+              endAdornment={(
+                <InputAdornment position="end">
                   <IconButton onClick={toggleShowPassword}>
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
-              }
+              )}
             />
-            <FormHelperText  >{inputsData.rePasswordErr}</FormHelperText>
+            <FormHelperText>{inputsData.rePasswordErr}</FormHelperText>
           </FormControl>
         </Grid>
-        <Button 
-          type='submit'
-          > 
+        <Button type="submit">
           Գրանցվել
         </Button>
       </form>
     </Grid>
   )
 }
-
-// export async function getServerSideProps (ctx) {
-//   const { a, salt, tok } = await setCsrf(ctx.req, ctx.res)
-//   console.log(a, salt, tok)
-//   return {
-//     props: {}
-//   }
-// }

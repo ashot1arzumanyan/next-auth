@@ -1,10 +1,10 @@
 import withErrorHandler from '@/middleware/errorHandler'
-import User from '@/models/user'
-import Session from '@/models/session'
+import User from '@/db/models/user'
+import Session from '@/db/models/session'
 import smtp from '@/utils/mail'
-import runMongoose from '@/utils/db'
+import runMongoose from '@/middleware/db'
 import { getRandomKey, jwtSign } from '@/utils/cryptos'
-import { emailSchema } from '@/validator/schemas'
+import { emailSchema } from '@/utils/validator/schemas'
 
 const handler = async (req, res) => {
   await runMongoose()
@@ -13,7 +13,7 @@ const handler = async (req, res) => {
   const findQuery = { email }
   const user = await User.findOne(findQuery)
   if (!user) {
-    throw Error('Provided wrong email: ' + email)
+    throw Error(`Provided wrong email: ${email}`)
   }
   const salt = await getRandomKey()
   const session = await Session.findOneAndUpdate(
@@ -22,7 +22,7 @@ const handler = async (req, res) => {
     { upsert: true, new: true }
   )
   const payload = { id: session._id }
-  const expiresIn = 60*60*1000*2
+  const expiresIn = 60 * 60 * 1000 * 2
   const tok = await jwtSign(payload, salt, { expiresIn })
   await smtp.send({
     from: 'ashot1arzumanyan@gmail.com',

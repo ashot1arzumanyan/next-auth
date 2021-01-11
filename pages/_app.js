@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
-import { ThemeProvider } from '@material-ui/core/styles'
+import PropTypes from 'prop-types'
+import { ThemeProvider, makeStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container'
-import { makeStyles } from '@material-ui/core/styles'
-import theme from '../src/theme'
+import themeDefault from '../styles/theme'
 import NavBar from '../src/components/NavBar'
 // import useUser from '@/hooks/useUser'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     marginTop: theme.spacing(11)
   }
@@ -16,9 +16,8 @@ const useStyles = makeStyles((theme) => ({
 // import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
-
   const classes = useStyles()
-
+  const { user } = pageProps
   // const user = useUser()
 
   useEffect(() => {
@@ -29,14 +28,23 @@ function MyApp({ Component, pageProps }) {
   }, [])
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container className={classes.root} >
+    <ThemeProvider theme={themeDefault}>
+      <Container className={classes.root}>
         <CssBaseline />
-        <NavBar user={pageProps.user} />
+        <NavBar user={user} />
         <Component {...pageProps} />
       </Container>
     </ThemeProvider>
-  ) 
+  )
+}
+
+MyApp.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.shape({
+    user: PropTypes.shape({
+      _id: PropTypes.string.isRequired
+    })
+  }).isRequired
 }
 
 export default MyApp

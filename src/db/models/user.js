@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-const Schema = mongoose.Schema
+
+const { Schema } = mongoose
 
 const UserSchema = new Schema({
   email: { type: String, required: true, unique: true, select: false },
@@ -8,6 +9,6 @@ const UserSchema = new Schema({
   temp: { type: Date, expires: '1d', default: Date.now, select: false }
 })
 
-const User = (mongoose.models && mongoose.models['User']) || mongoose.model('User', UserSchema)
+const User = (mongoose.models && mongoose.models.User) || mongoose.model('User', UserSchema)
 
 export default User

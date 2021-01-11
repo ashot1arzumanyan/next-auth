@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-const Schema = mongoose.Schema
+
+const { Schema } = mongoose
 
 const SessionSchema = new Schema({
   user: { type: Schema.Types.ObjectId, required: true, ref: 'User', unique: true },
@@ -8,6 +9,6 @@ const SessionSchema = new Schema({
   canResetPassword: { type: Boolean, required: true, default: false }
 })
 
-const Session = mongoose.models['Session'] || mongoose.model('Session', SessionSchema)
+const Session = (mongoose.models && mongoose.models.Session) || mongoose.model('Session', SessionSchema)
 
 export default Session

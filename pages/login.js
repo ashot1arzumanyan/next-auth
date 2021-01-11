@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useRouter } from 'next/router' 
+import { useRouter } from 'next/router'
 import TextField from '@material-ui/core/TextField'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
@@ -17,7 +17,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import { login } from '@/apis/auth'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   form: {
     width: '100%',
     maxWidth: '320px',
@@ -36,7 +36,6 @@ const initialData = {
 }
 
 export default function Login() {
-
   const classes = useStyles()
   const router = useRouter()
 
@@ -44,8 +43,8 @@ export default function Login() {
   const [inputsData, setInputsData] = useState(initialData)
 
   const handleChange = prop => async e => {
-    const value = e.target.value
-    setInputsData({...inputsData, [prop]: value})
+    const { value } = e.target
+    setInputsData({ ...inputsData, [prop]: value })
   }
 
   const toggleShowPassword = () => {
@@ -63,47 +62,47 @@ export default function Login() {
   }
 
   return (
-    <Grid container direction='column' alignItems='center' >
-      <Typography component='h1' variant='h5' >
+    <Grid container direction="column" alignItems="center">
+      <Typography component="h1" variant="h5">
         Մուտք
       </Typography>
       <form
         className={classes.form}
         onSubmit={handleSubmit}
-        noValidate >
-        <Grid container direction='column' >
-          <TextField 
+        noValidate
+      >
+        <Grid container direction="column">
+          <TextField
             onChange={handleChange('username')}
             value={inputsData.username}
-            label='Էլ․ հասցե կամ լոգին' 
-            variant='outlined' 
-            margin='normal' 
+            label="Էլ․ հասցե կամ լոգին"
+            variant="outlined"
+            margin="normal"
           />
-          <FormControl variant='outlined' margin='normal' >
-            <InputLabel htmlFor='password' >Գաղտնաբառ</InputLabel>
-            <OutlinedInput 
-              id='password' 
+          <FormControl variant="outlined" margin="normal">
+            <InputLabel htmlFor="password">Գաղտնաբառ</InputLabel>
+            <OutlinedInput
+              id="password"
               type={showPassword ? 'text' : 'password'}
               onChange={handleChange('password')}
               value={inputsData.password}
               labelWidth={120}
-              endAdornment={
-                <InputAdornment position='end' >
+              endAdornment={(
+                <InputAdornment position="end">
                   <IconButton onClick={toggleShowPassword}>
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
-              }
+              )}
             />
           </FormControl>
         </Grid>
-        <Button 
-          type='submit'
-          > 
+        <Button type="submit">
           Մուտք
         </Button>
-        <NextLink href='/resetPasswordEmail' passHref >
-          <Link className={classes.resetPassword} variant='body2' >
+        <NextLink href="/resetPasswordEmail" passHref>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <Link className={classes.resetPassword} variant="body2">
             Մոռացե՞լ եք գաղտնաբառը
           </Link>
         </NextLink>
